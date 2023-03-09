@@ -1,37 +1,28 @@
+from classes.Review import Review
 
-from classes.Movie import Movie
-from .Review import Review
 
 class Viewer:
+
     def __init__(self, username):
         self.username = username
-        self.reviews = []
 
-    def rate_movie(self, movie, rating):
-        review = Review(movie=movie, viewer=self, rating=rating)
-        self.reviews.append(review)
-        movie.add_review(review)
+    def get_username(self):
+        return self._username
+
+    def set_username(self, username):
+        if type(username) == str and 6 <= len(username) <= 16:
+            self._username = username
+
+    username = property(get_username, set_username)
+
+    def reviews(self):
+        return [review for review in Review.all if review.viewer == self and isinstance(review, Review)]
 
     def reviewed_movies(self):
-        return list(set([review.movie for review in self.reviews]))
+        return [review.movie for review in self.reviews()]
 
+    def movie_reviewed(self, movie):
+        return movie in self.reviewed_movies()
 
-# from .Review import Review
-
-
-
-
-
-    # username property goes here!
-
-    # def reviews(self):
-    #     pass
-
-    # def reviewed_movies(self):
-    #     pass
-
-    # def movie_reviewed(self, movie):
-    #     pass
-
-    # def rate_movie(self, movie, rating):
-    #     pass
+    def rate_movie(self, movie, rating):
+        Review(self, movie, rating)
